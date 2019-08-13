@@ -54,15 +54,15 @@ mod my_zome {
     }
 
     #[entry_def]
-     fn my_entry_def() -> ValidatingEntryType {
+     fn game_proposal_entry_def() -> ValidatingEntryType {
         entry!(
-            name: "my_entry",
-            description: "this is a same entry definition",
+            name: "game_proposal",
+            description: "this is a same entry representing a proposal to play a game",
             sharing: Sharing::Public,
             validation_package: || {
                 hdk::ValidationPackageDefinition::Entry
             },
-            validation: | _validation_data: hdk::EntryValidationData<MyEntry>| {
+            validation: | _validation_data: hdk::EntryValidationData<GameProposal>| {
                 Ok(())
             }
         )
