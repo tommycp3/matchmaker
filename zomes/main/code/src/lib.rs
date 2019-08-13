@@ -12,6 +12,7 @@ extern crate holochain_json_derive;
 use hdk::{
     entry_definition::ValidatingEntryType,
     error::ZomeApiResult,
+    AGENT_ADDRESS,
 };
 use hdk::holochain_core_types::{
     entry::Entry,
@@ -63,21 +64,37 @@ mod my_zome {
                 hdk::ValidationPackageDefinition::Entry
             },
             validation: | _validation_data: hdk::EntryValidationData<GameProposal>| {
-                Ok(())
-            }
+                        Ok(())
+                    }
+                    
+                        
+               
         )
     }
 
     #[zome_fn("hc_public")]
-    fn create_my_entry(entry: MyEntry) -> ZomeApiResult<Address> {
-        let entry = Entry::App("my_entry".into(), entry.into());
-        let address = hdk::commit_entry(&entry)?;
-        Ok(address)
+    fn create_proposal(message: String)-> ZomeApiResult<Address> {
+        // first create the strut
+        let proposal = GameProposal {
+            message: message,
+            agent: AGENT_ADDRESS.to_string().into(),
+        };
+
+        // next create an entry
+        let entry = Entry::App(
+
+            "game_proposal".into(),
+            proposal.into(),
+            );
+
+        // finally commit the entry.
+        // this adds it to the DHT an dlocal chain
+        // no semi-colon on this line means return the result
+        // the result is the address of the new entry on the DHT if successful
+        hdk::commit_entry(&entry)
     }
 
-    #[zome_fn("hc_public")]
-    fn get_my_entry(address: Address) -> ZomeApiResult<Option<Entry>> {
-        hdk::get_entry(&address)
-    }
+
+
 
 }
